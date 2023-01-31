@@ -1,67 +1,106 @@
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthProvider';
 import images from '../../../utils/image';
-import toast from 'react-hot-toast';
-
-const bgBanner = {
-  backgroundImage: `url(${images.gif})`,
-  backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat',
-  height: '700px',
-};
 
 const Registration = () => {
-  const { creactEmailAndPassword } = useContext(AuthContext);
+  const bgBanner = {
+    backgroundImage: `url(${images.register})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    height: '700px',
+  };
+  const [value, setValue] = useState<any>(null);
+
   const [error, setError] = useState('');
-  const { register, handleSubmit }: any = useForm();
+
+  const { createUserAccount, updateUserAccount } = useContext(AuthContext);
+
+  const { register, handleSubmit, watch }: any = useForm();
 
   const naviget = useNavigate();
 
   const onSubmit = (data: any) => {
-    const users = data.user;
-    const seller = data.seller;
-
-    if (users === seller) {
-      return alert('Please select one of the options  user  or seller');
+    if (data.user === data.seller) {
+      return alert('   plasec seta option');
     }
 
-    creactEmailAndPassword(data.email, data.password)
-      .then((userCredential: any) => {
-        const user = userCredential.user;
-        if (user.uid) {
-          setError('');
-          toast.success('Registration successful');
-          naviget('/login');
+    if (data.user === true) {
+      const users = data.user;
+      const newValue = users && 'user';
+      setValue(newValue);
+    }
+    if (data.seller === true) {
+      const seller = data.seller;
+      const newValue = seller && 'seller';
+      setValue(newValue);
+    }
+    if (value) {
+      createUserAccount(data.email, data.password).then((res: any) => {
+        updateUserAccount(data.name)
+          .then((result: any) => {
+            console.log('hit the res', result);
+
+            setError('');
+            const infoData = {
+              name: data.name,
+              email: data.email,
+              gander: data.gander,
+              userType: value,
+            };
+
+            saveUserAccountDB(infoData);
+          })
+
+          .catch((err: any) => {
+            setError(err.message);
+          });
+      });
+    } else {
+      alert('plase ageing click');
+    }
+  };
+
+  const saveUserAccountDB = (data: any) => {
+    fetch('http://localhost:5000/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }).then((res) =>
+      res.json().then((data) => {
+        if (data.insertedId) {
+          toast.success('Registration Successfull');
+          naviget('/');
         }
       })
-      .catch((error: any) => {
-        setError(error.message);
-      });
+    );
+    console.log(data);
   };
 
   return (
     <div style={bgBanner} className=" flex justify-center items-center">
       <form
-        className="bg-white p-6 rounded-lg w-96  "
+        className="bg-white p-6 rounded-lg w-96"
         onSubmit={handleSubmit(onSubmit)}
       >
         <h2 className=" text-3xl  font-serif text-center">Registration</h2>
-        <label className="block text-xl font-serif text-gray-700 font-medium mb-2">
+
+        <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
           Name
         </label>
         <input
           className="input  input-bordered   input-primary w-full max-w-md"
           type="text"
-          name="name"
+          name="email"
           {...register('name', { required: true })}
         />
         <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
           Email
         </label>
         <input
-          className="input  input-bordered   input-primary  w-full max-w-md"
+          className="input  input-bordered   input-primary w-full max-w-md"
           type="email"
           name="email"
           {...register('email', { required: true })}
@@ -73,12 +112,7 @@ const Registration = () => {
           className="input  input-bordered   input-primary w-full max-w-md"
           type="password"
           name="password"
-          {...register('password', {
-            required: {
-              value: 6,
-              message: 'Password must be at least 6 characters',
-            },
-          })}
+          {...register('password')}
         />
         <div className="form-control">
           <label className="label cursor-pointer">
@@ -105,24 +139,25 @@ const Registration = () => {
         </label>
         <select className="select select-primary w-full max-w-md">
           {['Male', 'Female', 'Other'].map((item) => (
-            <option value={item} {...register('gender', { required: true })}>
+            <option value={item} {...register('gander', { required: true })}>
               {item}
             </option>
           ))}
         </select>
-        {error && <p className="text-red-500">{error}</p>}
         <div className=" flex justify-end">
           <button className="bg-indigo-500  text-white py-2 px-4 rounded-lg mt-4 hover:bg-indigo-600">
-            Registration
+            Create an account
           </button>
         </div>
         <h2>
-          <span>Alrady Hava a account?</span>
+          <span>Alrady have a account?</span>
           <Link to="/login" className=" text-primary">
             {' '}
             <span>Login</span>
           </Link>
         </h2>
+
+        {error && <p className="text-red-500">{error}</p>}
       </form>
     </div>
   );

@@ -4,14 +4,14 @@ import { AuthContext } from '../../context/AuthProvider';
 import images from '../../utils/image';
 
 const Navigation = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, handleSignOut } = useContext(AuthContext);
 
   const handleLogout = async () => {
-    try {
-      await logout().then(() => {});
-    } catch (error) {
-      console.log(error);
-    }
+    handleSignOut()
+      .then(() => {})
+      .catch((error: any) => {
+        console.log('error', error.message);
+      });
   };
   return (
     <div className="navbar   ">
@@ -21,50 +21,47 @@ const Navigation = () => {
             <img src={images.logo} className="w-20   " alt="" />
           </Link>
         </div>
-        <div className="flex-none">
+        <div className="flex-none hidden lg:flex">
           <ul className="menu menu-horizontal px-1">
             <li>
               <a>Home</a>
             </li>
-            <li tabIndex={0}>
-              <a>
-                Catagory
-                <svg
-                  className="fill-current"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-                </svg>
-              </a>
-              <ul className="p-2 bg-base-100">
-                <li>
-                  <a>Palser</a>
-                </li>
-                <li>
-                  <a>Discover</a>
-                </li>
-                <li>
-                  <a>Hero</a>
-                </li>
-              </ul>
-            </li>
+
+            <Link to={'/dashboard'}>
+              <li>
+                <a>Dashboard</a>
+              </li>
+            </Link>
             {user?.email ? (
               <li onClick={handleLogout}>
                 <a>Logout</a>
               </li>
             ) : (
               <>
-                <li>
-                  <Link to="/login">Login</Link>
-                </li>
+                <Link to="/login">
+                  <li>
+                    <a>Login</a>
+                  </li>
+                </Link>
               </>
             )}
             {user?.email && (
               <li>
-                <a>{user?.email}</a>
+                <a>
+                  <div className="dropdown dropdown-bottom dropdown-end">
+                    <label tabIndex={0} className="   text-xl font-bold m-1">
+                      {user?.displayName}
+                    </label>
+                    <ul
+                      tabIndex={0}
+                      className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52"
+                    >
+                      <li>
+                        <a>Profile</a>
+                      </li>
+                    </ul>
+                  </div>
+                </a>
               </li>
             )}
           </ul>

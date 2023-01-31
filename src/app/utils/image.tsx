@@ -5,6 +5,7 @@ import gif from '../../assets/motorbike.gif';
 import register from '../../assets/motorbike.png';
 import login from '../../assets/motorbike-login.png';
 import error from '../../assets/error.png';
+import footer from '../../assets/footer.png';
 
 const images = {
   logo,
@@ -14,6 +15,7 @@ const images = {
   register,
   login,
   error,
+  footer,
 };
 
 export default images;

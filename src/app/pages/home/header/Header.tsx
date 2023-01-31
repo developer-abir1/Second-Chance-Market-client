@@ -1,3 +1,4 @@
+import { sub } from 'date-fns';
 import React from 'react';
 import images from '../../../utils/image';
 
@@ -9,11 +10,18 @@ const Header = () => {
 
     backgroundRepeat: 'no-repeat',
   };
+
+  const date = sub(new Date(), { minutes: 10 }).toISOString();
+  console.log(date);
   return (
-    <div style={bgBanner} className="hero  md:-mb-32 -mb-12   ">
+    <div style={bgBanner} className="hero    ">
       <div className="hero-content flex-col lg:flex-row">
-        <img src={images.bikHeader} className="max-w-md rounded-lg  " />
-        <div className="md:ml-16  ml-0">
+        <img
+          src={images.bikHeader}
+          className=" relative  md:max-w-md sm:max-w-0 rounded-lg  "
+        />
+
+        <div className="lg:ml-16   ml-0">
           <h1 className="text-5xl font-bold  font-serif text-white">
             Ride in Style with Retrofitted Bikes{' '}
           </h1>

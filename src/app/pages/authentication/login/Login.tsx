@@ -2,9 +2,8 @@ import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import images from '../../../utils/image';
-import { AuthContext } from '../../../context/AuthProvider';
 import { toast } from 'react-hot-toast';
-
+import { AuthContext } from '../../../context/AuthProvider';
 const Login = () => {
   const bgBanner = {
     backgroundImage: `url(${images.login})`,
@@ -13,19 +12,15 @@ const Login = () => {
     height: '700px',
   };
 
-  const { loginUser } = useContext(AuthContext);
   const [error, setError] = useState('');
+
+  const { singInUserAccount } = useContext(AuthContext);
 
   const { register, handleSubmit, watch }: any = useForm();
   const onSubmit = (data: any) => {
-    console.log(data);
-    loginUser(data.email, data.password)
-      .then((userCredential: any) => {
-        const user = userCredential.user;
-        if (user.uid) {
-          setError('');
-          toast.success('Logn successful');
-        }
+    singInUserAccount(data.email, data.password)
+      .then((result: any) => {
+        toast.success('Login Successfull');
       })
       .catch((error: any) => {
         setError(error.message);
@@ -61,7 +56,7 @@ const Login = () => {
 
         <div className=" flex justify-end">
           <button className="bg-indigo-500  text-white py-2 px-4 rounded-lg mt-4 hover:bg-indigo-600">
-            Registration
+            Login
           </button>
         </div>
         <h2>

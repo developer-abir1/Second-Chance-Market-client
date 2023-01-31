@@ -1,53 +1,66 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { createContext } from 'react';
 import {
   getAuth,
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  updateProfile,
+  deleteUser,
+  signOut,
   signInWithEmailAndPassword,
-  signOut as signOutFirebase,
-  onAuthStateChanged as onAuthStateChangedFirebase,
-  updateProfile as updateProfileFirebase,
 } from 'firebase/auth';
+import { useEffect } from 'react';
 import app from '../../firebase/firebaseConfig/firebaseConfig';
 
 export const AuthContext = createContext<any>(null);
-const AuthProvider = ({ children }: any): any => {
-  const auth = getAuth(app);
+const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const creactEmailAndPassword = (email: any, password: any) => {
+  const auth: any = getAuth(app);
+  const createUserAccount = (email: string, password: string) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  const loginUser = (email: any, password: any) => {
+  const updateUserAccount = (name: string) => {
+    return updateProfile(auth.currentUser, {
+      displayName: name,
+    });
+  };
+
+  const singInUserAccount = (email: string, password: string) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  const logout = () => {
-    setLoading(true);
-    return signOutFirebase(auth);
+  // delete user account
+  const deleteUserAccount = () => {
+    return deleteUser(auth.currentUser);
   };
-  const updateUserInfo = (name: string) => {};
-
+  const handleSignOut = () => {
+    return signOut(auth);
+  };
   useEffect(() => {
-    const unsubscribe = onAuthStateChangedFirebase(auth, (user: any) => {
+    const unsubscribed = onAuthStateChanged(auth, (user: any) => {
       setUser(user);
+
       setLoading(false);
     });
-    return unsubscribe;
-  }, [auth]);
+    return unsubscribed;
+  }, []);
 
-  const loginginfo = {
-    creactEmailAndPassword,
-    loginUser,
-    logout,
+  const userInfo: any = {
+    createUserAccount,
+    updateUserAccount,
+    deleteUserAccount,
+    handleSignOut,
+    singInUserAccount,
     user,
   };
+
   return (
-    <AuthContext.Provider value={loginginfo}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={userInfo}>{children}</AuthContext.Provider>
   );
 };
 

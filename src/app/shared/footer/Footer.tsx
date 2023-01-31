@@ -1,6 +1,13 @@
 import React from 'react';
+import images from '../../utils/image';
 
 const Footer = () => {
+  const bgBanner = {
+    backgroundImage: `url(${images.footer})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+  };
+
   return (
     <footer className="footer p-10 bg-neutral text-neutral-content">
       <div>
