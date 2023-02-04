@@ -38,15 +38,13 @@ const ManageProducts = () => {
               <th>Product Title</th>
               <th>Name</th>
               <th>Email</th>
-
               <th>Phone Number </th>
               <th>Type of user </th>
               <th>Category</th>
-              <th>Price</th>
+              <th>New Price</th>
+              <th>Old Price</th>
+              <th>Time</th>
               <th>image</th>
-              <th>Action</th>
-              <th>Delete</th>
-              <th>Delete</th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -64,17 +62,13 @@ const ManageProducts = () => {
                 <td>{product.oldPrice}</td>
 
                 <td>
-                  {' '}
                   <TimeAgo timestap={product.date} />
                 </td>
 
                 <td>
-                  {' '}
                   <img src={product?.image} className="w-12" alt="" />
                 </td>
-                <td>
-                  <button className=" btn btn-sm  btn-accent">Live</button>
-                </td>
+
                 <td>
                   <button className=" btn btn-sm    btn-error">Delete</button>
                 </td>

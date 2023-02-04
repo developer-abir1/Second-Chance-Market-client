@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import images from '../../../utils/image';
 import { toast } from 'react-hot-toast';
@@ -13,7 +13,10 @@ const Login = () => {
   };
 
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
 
+  const from = location.state?.from?.pathname || '/'; // redirect after login
   const { singInUserAccount } = useContext(AuthContext);
 
   const { register, handleSubmit, watch }: any = useForm();
@@ -21,6 +24,7 @@ const Login = () => {
     singInUserAccount(data.email, data.password)
       .then((result: any) => {
         toast.success('Login Successfull');
+        navigate(from, { replace: true });
       })
       .catch((error: any) => {
         setError(error.message);

@@ -47,7 +47,7 @@ const ManageUser = () => {
   };
 
   const removeUser = (id: any) => {
-    fetch(`http://localhost:5000/users/${id}`, {
+    fetch(`http://localhost:5000/users/admin/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -60,7 +60,6 @@ const ManageUser = () => {
         }
       });
   };
-
   console.log(users);
   if (isLoading) return <Loading />;
 
@@ -93,7 +92,7 @@ const ManageUser = () => {
             {users?.map((user: any, index: number) => (
               <tr key={user._id}>
                 <th>{index + 1}</th>
-                <td>{user.name}</td>
+                <td>{user.displayName}</td>
                 <td>{user.email}</td>
                 <td>{user.userType}</td>
 

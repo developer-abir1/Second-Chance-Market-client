@@ -8,12 +8,21 @@ import { IoDiamondSharp } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import ProfileUpdateModal from '../../../shared/profileUpdate/ProfileUpdateModal';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-hot-toast';
+import { reload } from 'firebase/auth';
+import ConformModal from '../../../shared/confromModal/ConformModal';
 
 const Profile = () => {
-  const { user } = useContext(AuthContext);
+  const {
+    user,
+    updateUserAccount,
+    updateUserEmail,
+    handleImageUpload,
+    imageURL,
+    loading,
+  } = useContext(AuthContext);
 
   const [updateProfile, setUpdatingProfile] = useState(null);
-
   const {
     data: users = [],
     isLoading,
@@ -29,23 +38,57 @@ const Profile = () => {
     },
   });
   const myAccount = users[0];
-  console.log('my account', myAccount);
-
-  const profileUpdate = ({ e }: any) => {
-    e.preventDefault();
-
-    // fetch(`http://localhost:5000/users/${data._id}`, {
-    //   method: 'PACTH',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(data),
-    // }).then((result) => {
-    //   console.log(result);
-    //   refetch();
-    //   setUpdatingProfile(null);
-    // });
+  const reloadMe = () => {
+    location.reload();
   };
+  console.log('myAccount', myAccount);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+
+  const handlePhoto = (data: any) => {
+    handleImageUpload(data);
+  };
+
+  const profileUpdate = (data: any) => {
+    const updateInfo = {
+      displayName: data.displayName,
+      email: myAccount.email,
+      phoneNumber: data.phoneNumber,
+      address: data.address,
+      photoURL: !imageURL ? myAccount.photoURL : imageURL,
+    };
+    console.log('disp', updateInfo);
+
+    fetch(`http://localhost:5000/users/${myAccount._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateInfo),
+    })
+      .then((res) => res.json())
+      .then((update: any) => {
+        if (update.modifiedCount > 0) {
+          updateUserAccount(data.displayName, imageURL)
+            .then((res: any) => {})
+            .catch((err: any) => {
+              console.log('Massage', err.message);
+            });
+          updateUserEmail(data.email).then((res: any) => {
+            console.log('Massage', res.message);
+          });
+        }
+      });
+    toast.success('Profile Updated Successfully');
+
+    setUpdatingProfile(null);
+    refetch();
+  };
+
   if (isLoading) {
     return <Loading />;
   }
@@ -57,32 +100,23 @@ const Profile = () => {
           <div className="w-full     bg-white  h-full   mt-6 rounded-md ">
             <div className=" grid grid-cols-1 md:grid-cols-2  gap-4 px-12 space-x-4 justify-items-center   items-center   ">
               <div className="mt-12">
-                <div className="avatar online relative">
-                  <div className="w-48 ml-4   rounded-full ">
-                    <img
-                      src="https://img.freepik.com/free-photo/close-up-young-successful-man-smiling-camera-standing-casual-outfit-against-blue-background_1258-66609.jpg?w=740&t=st=1675172339~exp=1675172939~hmac=fbc3d0739c5c7f11d868d0390183f0e6e1e42a883f7332f4c6b00cf9d3d94936"
-                      className=" "
-                    />
-                  </div>
-                  <div className="">
-                    <FaCamera
-                      size={30}
-                      className=" absolute bottom-3 bg-white  rounded-full hover:bg-white btn  btn-ghost p-1  w-10 h-10 right-4 "
-                    />
+                <div className="avatar online relative ">
+                  <div className="w-48 ml-4   rounded-full border-2 border-teal-400  ">
+                    <img src={myAccount?.photoURL} className=" " />
                   </div>
                 </div>
               </div>
               <div>
                 <div className="  mt-12">
                   <h2 className="text-3xl font-serif capitalize mb-4 flex  space-x-2">
-                    <span>Name: {myAccount?.name}</span>
+                    <span>Name: {myAccount?.displayName}</span>
                     <span>
                       {' '}
                       <IoDiamondSharp size={30} className=" text-secondary" />
                     </span>
                   </h2>
                   <h2>
-                    <span className="text-2xl font-serif mb-4 capitalize">
+                    <span className="text-2xl font-serif mb-4  ">
                       Email: {myAccount?.email}
                     </span>
                   </h2>
@@ -90,7 +124,7 @@ const Profile = () => {
                     <span className="text-2xl font-serif mb-4 capitalize">
                       Phone Number:{' '}
                       {myAccount?.phoneNumber
-                        ? '0' + myAccount?.phoneNumber
+                        ? '+88' + myAccount?.phoneNumber
                         : 'Not Available'}
                     </span>
                   </h2>
@@ -101,7 +135,7 @@ const Profile = () => {
                   </h2>
                   <h2>
                     <span className="text-2xl font-serif mb-4 capitalize">
-                      Gender: {myAccount?.gander}
+                      Gender: {myAccount?.gender}
                     </span>
                   </h2>
                   <h2>
@@ -110,14 +144,23 @@ const Profile = () => {
                     </span>
                   </h2>
                   <div className=" flex justify-end">
-                    <label
-                      htmlFor="update-profile-modal"
-                      className="btn flex   btn-sm mt-2"
-                      onClick={() => setUpdatingProfile(myAccount)}
-                    >
-                      {' '}
-                      <AiOutlineEdit size={30} /> Eidit
-                    </label>
+                    {!user?.email ? (
+                      <button
+                        onClick={() => reloadMe()}
+                        className="btn btn-sm btn-primary"
+                      >
+                        Reload page
+                      </button>
+                    ) : (
+                      <label
+                        htmlFor="update-profile-modal"
+                        className="btn flex   btn-sm mt-2"
+                        onClick={() => setUpdatingProfile(myAccount)}
+                      >
+                        {' '}
+                        <AiOutlineEdit size={30} /> Eidit
+                      </label>
+                    )}
                   </div>
                 </div>
               </div>
@@ -126,7 +169,14 @@ const Profile = () => {
         </div>
       </div>
       {updateProfile && (
-        <ProfileUpdateModal data={updateProfile} fromSubmit={profileUpdate} />
+        <ProfileUpdateModal
+          updateInfo={updateProfile}
+          fromSubmit={profileUpdate}
+          handleSubmit={handleSubmit}
+          register={register}
+          handlePhoto={handlePhoto}
+          imageURL={imageURL}
+        />
       )}
     </div>
   );

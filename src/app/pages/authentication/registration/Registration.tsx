@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
+import { FiImage } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../../context/AuthProvider';
 import images from '../../../utils/image';
@@ -16,50 +17,62 @@ const Registration = () => {
 
   const [error, setError] = useState('');
 
-  const { createUserAccount, updateUserAccount } = useContext(AuthContext);
+  const { createUserAccount, updateUserAccount, handleImageUpload, imageURL } =
+    useContext(AuthContext);
 
   const { register, handleSubmit, watch }: any = useForm();
 
+  const displayName = watch('displayName');
+  const email = watch('email');
+  const password = watch('password');
+  const user = watch('user');
+  const seller = watch('seller');
+  const gender = watch('gender');
+  const isValid = displayName && password && email && gender;
+
   const naviget = useNavigate();
+
+  const handleImage = (data: any) => {
+    handleImageUpload(data);
+  };
 
   const onSubmit = (data: any) => {
     if (data.user === data.seller) {
       return alert('   plasec seta option');
-    }
-
-    if (data.user === true) {
+    } else if (data.user === true) {
       const users = data.user;
       const newValue = users && 'user';
       setValue(newValue);
-    }
-    if (data.seller === true) {
+    } else if (data.seller === true) {
       const seller = data.seller;
       const newValue = seller && 'seller';
       setValue(newValue);
     }
+
     if (value) {
-      createUserAccount(data.email, data.password).then((res: any) => {
-        updateUserAccount(data.name)
-          .then((result: any) => {
-            console.log('hit the res', result);
+      const user = {
+        displayName: data.displayName,
+        email: data.email,
+        userType: value,
+        photoURL: imageURL,
+        gender: data.gender,
+      };
 
-            setError('');
-            const infoData = {
-              name: data.name,
-              email: data.email,
-              gander: data.gander,
-              userType: value,
-            };
+      createUserAccount(data.email, data.password)
+        .then((res: any) => {
+          console.log('create users', res);
+          if (res.uid) {
+          }
+          updateUserAccount(data.displayName, imageURL);
+          saveUserAccountDB(user);
+        })
 
-            saveUserAccountDB(infoData);
-          })
-
-          .catch((err: any) => {
-            setError(err.message);
-          });
-      });
+        .catch((err: any) => {
+          console.log(err);
+          setError(err.message);
+        });
     } else {
-      alert('plase ageing click');
+      toast.error('please click   again  ');
     }
   };
 
@@ -70,6 +83,7 @@ const Registration = () => {
       body: JSON.stringify(data),
     }).then((res) =>
       res.json().then((data) => {
+        console.log('database save data', data);
         if (data.insertedId) {
           toast.success('Registration Successfull');
           naviget('/');
@@ -82,70 +96,111 @@ const Registration = () => {
   return (
     <div style={bgBanner} className=" flex justify-center items-center">
       <form
-        className="bg-white p-6 rounded-lg w-96"
+        className="bg-white p-6 rounded-lg   "
         onSubmit={handleSubmit(onSubmit)}
       >
         <h2 className=" text-3xl  font-serif text-center">Registration</h2>
 
-        <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
-          Name
-        </label>
-        <input
-          className="input  input-bordered   input-primary w-full max-w-md"
-          type="text"
-          name="email"
-          {...register('name', { required: true })}
-        />
-        <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
-          Email
-        </label>
-        <input
-          className="input  input-bordered   input-primary w-full max-w-md"
-          type="email"
-          name="email"
-          {...register('email', { required: true })}
-        />
-        <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
-          Password
-        </label>
-        <input
-          className="input  input-bordered   input-primary w-full max-w-md"
-          type="password"
-          name="password"
-          {...register('password')}
-        />
-        <div className="form-control">
-          <label className="label cursor-pointer">
-            <span className="label-text text-xl font-serif">User</span>
+        <div className=" grid  grid-cols-2  gap-4">
+          <div>
+            <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
+              Name
+            </label>
             <input
-              type="checkbox"
-              className="checkbox checkbox-primary"
-              {...register('user')}
+              className="input  input-bordered   input-primary w-full max-w-md"
+              type="text"
+              name="name"
+              {...register('displayName', { required: true })}
             />
-          </label>
-        </div>
-        <div className="form-control">
-          <label className="label cursor-pointer">
-            <span className="label-text text-xl font-serif">Seller</span>
+          </div>
+          <div>
+            <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
+              Email
+            </label>
             <input
-              type="checkbox"
-              className="checkbox checkbox-primary  "
-              {...register('seller')}
+              className="input  input-bordered   input-primary w-full max-w-md"
+              type="email"
+              name="email"
+              {...register('email', { required: true })}
             />
-          </label>
+          </div>
+          <div>
+            <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
+              Password
+            </label>
+            <input
+              className="input  input-bordered   input-primary w-full max-w-md"
+              type="password"
+              name="password"
+              {...register('password', { required: true })}
+            />
+          </div>
+
+          <div>
+            <div className="form">
+              <label className="label cursor-pointer">
+                <span className="label-text text-xl font-serif">User</span>
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-primary"
+                  {...register('user')}
+                  disabled={seller}
+                />
+              </label>
+            </div>
+            <div className="form">
+              <label className="label cursor-pointer">
+                <span className="label-text text-xl font-serif">Seller</span>
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-primary  "
+                  {...register('seller')}
+                  disabled={user}
+                />
+              </label>
+            </div>
+          </div>
+          <div>
+            {' '}
+            <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
+              Gender
+            </label>
+            <select className="select select-primary w-full max-w-md">
+              {['male', 'female', 'Other'].map((item) => (
+                <option
+                  value={item}
+                  {...register('gender', { required: true })}
+                >
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className=" relative border-2 border-dashed">
+            <label className="  text-xl   flex justify-center items-center font-serif text-gray-700 font-medium mb-2 mt-4">
+              {!imageURL && <FiImage size={60} />}
+              {imageURL && (
+                <img
+                  src={imageURL}
+                  className="  absolute top-0 h-full w-full   object-contain "
+                  alt=""
+                />
+              )}
+            </label>
+            <input
+              className="input absolute  top-0 opacity-0 h-full  input-bordered   input-primary w-full max-w-md"
+              type="file"
+              name="file"
+              onChange={(e: any) => handleImage(e.target.files[0])}
+            />
+          </div>
         </div>
-        <label className="block text-xl font-serif text-gray-700 font-medium mb-2 mt-4">
-          Gander
-        </label>
-        <select className="select select-primary w-full max-w-md">
-          {['Male', 'Female', 'Other'].map((item) => (
-            <option value={item} {...register('gander', { required: true })}>
-              {item}
-            </option>
-          ))}
-        </select>
+
         <div className=" flex justify-end">
-          <button className="bg-indigo-500  text-white py-2 px-4 rounded-lg mt-4 hover:bg-indigo-600">
+          <button
+            disabled={!isValid}
+            className="bg-indigo-500 btn  text-white py-2 px-4 rounded-lg mt-4 hover:bg-indigo-600"
+          >
             Create an account
           </button>
         </div>

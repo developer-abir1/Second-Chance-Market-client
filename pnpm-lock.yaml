@@ -7,12 +7,15 @@ specifiers:
   '@vitejs/plugin-react': ^3.0.0
   autoprefixer: ^10.4.13
   axios: ^1.2.6
+  chart.js: ^4.2.0
   daisyui: ^2.49.0
   date-fns: ^2.29.3
+  faker: ^6.6.6
   firebase: ^9.16.0
   moment: ^2.29.4
   postcss: ^8.4.21
   react: ^18.2.0
+  react-chartjs-2: ^5.2.0
   react-day-picker: ^8.5.1
   react-dom: ^18.2.0
   react-hook-form: ^7.42.1
@@ -28,11 +31,14 @@ specifiers:
 dependencies:
   '@tanstack/react-query': 4.23.0_biqbaboplfbrettd7655fr4n2y
   axios: 1.2.6
+  chart.js: 4.2.0
   daisyui: 2.49.0_gbtt6ss3tbiz4yjtvdr6fbrj44
   date-fns: 2.29.3
+  faker: 6.6.6
   firebase: 9.16.0
   moment: 2.29.4
   react: 18.2.0
+  react-chartjs-2: 5.2.0_uxqdnqzacoapcp4mwytn5yclyu
   react-day-picker: 8.5.1_r6j3756ioqf5pjc2u22wj25rla
   react-dom: 18.2.0_react@18.2.0
   react-hook-form: 7.42.1_react@18.2.0
@@ -997,6 +1003,10 @@ packages:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
+
+  /@kurkle/color/0.3.2:
+    resolution: {integrity: sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==}
+    dev: false
 
   /@nodelib/fs.scandir/2.1.5:
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2387,6 +2397,13 @@ packages:
       upper-case-first: 1.1.2
     dev: false
 
+  /chart.js/4.2.0:
+    resolution: {integrity: sha512-wbtcV+QKeH0F7gQZaCJEIpsNriFheacouJQTVIjITi3eQA8bTlIBoknz0+dgV79aeKLNMAX+nDslIVE/nJ3rzA==}
+    engines: {pnpm: ^7.0.0}
+    dependencies:
+      '@kurkle/color': 0.3.2
+    dev: false
+
   /chokidar/1.7.0_supports-color@3.2.3:
     resolution: {integrity: sha512-mk8fAWcRUOxY7btlLtitj3A45jOwSAxH4tOFOoEGbVsl6cL6pPMWUy7dwZ/canfj3QEdP6FHSnf/l1c6/WkzVg==}
     deprecated: Chokidar 2 will break on node v14+. Upgrade to chokidar 3 with 15x less dependencies.
@@ -3524,6 +3541,10 @@ packages:
       loader-utils: 0.2.17
       webpack: 1.13.1
       webpack-sources: 0.1.5
+    dev: false
+
+  /faker/6.6.6:
+    resolution: {integrity: sha512-9tCqYEDHI5RYFQigXFwF1hnCwcWCOJl/hmll0lr5D2Ljjb0o4wphb69wikeJDz5qCEzXCoPvG6ss5SDP6IfOdg==}
     dev: false
 
   /fast-glob/3.2.12:
@@ -5720,6 +5741,16 @@ packages:
       http-errors: 2.0.0
       iconv-lite: 0.4.24
       unpipe: 1.0.0
+    dev: false
+
+  /react-chartjs-2/5.2.0_uxqdnqzacoapcp4mwytn5yclyu:
+    resolution: {integrity: sha512-98iN5aguJyVSxp5U3CblRLH67J8gkfyGNbiK3c+l1QI/G4irHMPQw44aEPmjVag+YKTyQ260NcF82GTQ3bdscA==}
+    peerDependencies:
+      chart.js: ^4.1.1
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      chart.js: 4.2.0
+      react: 18.2.0
     dev: false
 
   /react-day-picker/8.5.1_r6j3756ioqf5pjc2u22wj25rla:
