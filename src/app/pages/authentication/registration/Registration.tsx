@@ -77,7 +77,7 @@ const Registration = () => {
   };
 
   const saveUserAccountDB = (data: any) => {
-    fetch('http://localhost:5000/users', {
+    fetch('https://reseller-products-server.vercel.app/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

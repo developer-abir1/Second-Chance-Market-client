@@ -35,7 +35,7 @@ const router = createBrowserRouter([
         element: <ProductDetails />,
         loader: async ({ params }) => {
           const res = await fetch(
-            `http://localhost:5000/products/${params.prodId}`
+            `https://reseller-products-server.vercel.app/products/${params.prodId}`
           );
           const data = await res.json();
           return data;

@@ -32,7 +32,7 @@ const AddProducts = () => {
     queryKey: ['users', user?.email],
     queryFn: async () => {
       const res = await fetch(
-        `http://localhost:5000/users?email=${user?.email}`
+        `https://reseller-products-server.vercel.app/users?email=${user?.email}`
       );
       const data = await res.json();
       return data;
@@ -62,7 +62,7 @@ const AddProducts = () => {
       model: data.model,
       date: new Date().toISOString(),
     };
-    fetch('http://localhost:5000/products', {
+    fetch('https://reseller-products-server.vercel.app/products', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
