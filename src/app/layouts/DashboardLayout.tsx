@@ -54,6 +54,11 @@ const DashboardLayout = () => {
                 <a>Cheeked Booking</a>
               </li>
             </Link>
+            <Link to={'/dashboard/myProducts'}>
+              <li>
+                <a>My Products</a>
+              </li>
+            </Link>
           </ul>
         </div>
       </div>

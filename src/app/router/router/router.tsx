@@ -13,6 +13,7 @@ import Profile from '../../pages/dashboard/profile/Profile';
 import ProductDetails from '../../pages/productDetails/ProductDetails';
 import MyBooking from '../../pages/dashboard/myBooking/MyBooking';
 import CheekedBooked from '../../pages/dashboard/CheekedBooked/CheekedBooked';
+import MyProducts from '../../pages/dashboard/myProducts/MyProducts';
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
         element: <ProductDetails />,
         loader: async ({ params }) => {
           const res = await fetch(
-            `https://reseller-products-server.vercel.app/products/${params.prodId}`
+            `http://localhost:5000/products/${params.prodId}`
           );
           const data = await res.json();
           return data;
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: 'cheeked-booked',
         element: <CheekedBooked />,
+      },
+      {
+        path: 'myProducts',
+        element: <MyProducts />,
       },
     ],
   },

@@ -15,16 +15,14 @@ const ManageUser = () => {
   } = useQuery({
     queryKey: ['admin'],
     queryFn: async () => {
-      const res = await fetch(
-        `https://reseller-products-server.vercel.app/users/admin`
-      );
+      const res = await fetch(`http://localhost:5000/users/admin`);
       const data = await res.json();
       return data;
     },
   });
 
   const handleMakeAdmin = (id: any) => {
-    fetch(`https://reseller-products-server.vercel.app/users/admin/${id}`, {
+    fetch(`http://localhost:5000/users/admin/${id}`, {
       method: 'PUT',
     })
       .then((res) => res.json())
@@ -36,7 +34,7 @@ const ManageUser = () => {
       });
   };
   const removeAdmin = (id: any) => {
-    fetch(`https://reseller-products-server.vercel.app/users/admin/${id}`, {
+    fetch(`http://localhost:5000/users/admin/${id}`, {
       method: 'PATCH',
     })
       .then((res) => res.json())
@@ -49,7 +47,7 @@ const ManageUser = () => {
   };
 
   const removeUser = (id: any) => {
-    fetch(`https://reseller-products-server.vercel.app/users/admin/${id}`, {
+    fetch(`http://localhost:5000/users/admin/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())

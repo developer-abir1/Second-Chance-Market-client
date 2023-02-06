@@ -1,20 +1,24 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useContext } from 'react';
 import Loading from '../../../shared/Loading/Loading';
 import moment from 'moment';
 import TimeAgo from '../../../shared/TimeAgo/TimeAgo';
 import { format } from 'date-fns';
+import { AuthContext } from '../../../context/AuthProvider';
 
-const ManageProducts = () => {
+const MyProducts = () => {
+  const { user } = useContext(AuthContext);
   const { data: productData = [], isLoading } = useQuery({
-    queryKey: ['products'],
+    queryKey: ['products', user?.email],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5000/products`);
+      const res = await fetch(
+        `http://localhost:5000/product?email=${user?.email}`
+      );
       const data = await res.json();
       return data;
     },
   });
-
+  console.log(productData);
   if (isLoading) {
     return <Loading />;
   }
@@ -29,7 +33,7 @@ const ManageProducts = () => {
 
   return (
     <div>
-      <h2 className="ml-16 text-2xl mt-16 mb-4">Manage product</h2>
+      <h2 className="ml-16 text-2xl mt-16 mb-4">My Products</h2>
       <div className="overflow-x-auto px-16  ">
         <table className="table table-compact w-full    ">
           <thead>
@@ -81,4 +85,4 @@ const ManageProducts = () => {
   );
 };
 
-export default ManageProducts;
+export default MyProducts;

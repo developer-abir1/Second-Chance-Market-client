@@ -31,7 +31,7 @@ const Profile = () => {
     queryKey: ['users', user?.email],
     queryFn: async () => {
       const res = await fetch(
-        `https://reseller-products-server.vercel.app/users?email=${user?.email}`
+        `http://localhost:5000/users?email=${user?.email}`
       );
       const data = await res.json();
       return data;
@@ -63,16 +63,13 @@ const Profile = () => {
     };
     console.log('disp', updateInfo);
 
-    fetch(
-      `https://reseller-products-server.vercel.app/users/${myAccount._id}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateInfo),
-      }
-    )
+    fetch(`http://localhost:5000/users/${myAccount._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateInfo),
+    })
       .then((res) => res.json())
       .then((update: any) => {
         if (update.modifiedCount > 0) {
