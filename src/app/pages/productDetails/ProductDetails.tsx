@@ -9,6 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 const ProductDetails = () => {
   const product: any = useLoaderData();
   const { user } = useContext(AuthContext);
+  console.log('safdsaf', product);
 
   const {
     data: bookings = [],
@@ -17,7 +18,9 @@ const ProductDetails = () => {
   } = useQuery({
     queryKey: ['booking', product._id],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5000/booking`);
+      const res = await fetch(
+        ` https://reseller-products-server.vercel.app/booking`
+      );
       const data = await res.json();
       return data;
     },
@@ -30,7 +33,7 @@ const ProductDetails = () => {
       ...product,
       date: moment().format('MMMM Do YYYY, h:mm:ss a'),
     };
-    fetch('http://localhost:5000/booking', {
+    fetch(' https://reseller-products-server.vercel.app/booking', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bookingData),

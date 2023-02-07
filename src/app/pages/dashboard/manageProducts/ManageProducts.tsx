@@ -9,7 +9,11 @@ const ManageProducts = () => {
   const { data: productData = [], isLoading } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:5000/products`);
+      const res = await fetch(` http://localhost:5000/products`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
       const data = await res.json();
       return data;
     },

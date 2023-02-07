@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import images from '../../../utils/image';
 import { toast } from 'react-hot-toast';
 import { AuthContext } from '../../../context/AuthProvider';
+import useToken from '../../../hooks/useToken';
 const Login = () => {
   const bgBanner = {
     backgroundImage: `url(${images.login})`,
@@ -11,25 +12,49 @@ const Login = () => {
     backgroundRepeat: 'no-repeat',
     height: '700px',
   };
-
-  const [error, setError] = useState('');
+  const [loggedInUser, setLoggedInUser] = useState<any>(null);
+  const [token] = useToken(loggedInUser);
   const navigate = useNavigate();
+  const [error, setError] = useState('');
   const location = useLocation();
 
   const from = location.state?.from?.pathname || '/'; // redirect after login
   const { singInUserAccount } = useContext(AuthContext);
 
+  if (token) {
+    navigate(from, { replace: true });
+  }
+
   const { register, handleSubmit, watch }: any = useForm();
   const onSubmit = (data: any) => {
     singInUserAccount(data.email, data.password)
       .then((result: any) => {
-        toast.success('Login Successfull');
-        navigate(from, { replace: true });
+        const user = result.user;
+        console.log('user', user.email);
+        const currentUser = {
+          email: user.email,
+        };
+        setLoggedInUser(currentUser);
       })
       .catch((error: any) => {
         setError(error.message);
       });
   };
+
+  // const accessTokenToken = (currentUser: any) => {
+  //   fetch(' http://localhost:5000/jwt', {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify(currentUser),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log('data', data);
+  //       localStorage.setItem('accessToken', data.token);
+  //       toast.success('Login Success');
+  //       navigate(from);
+  //     });
+  // };
 
   return (
     <div style={bgBanner} className=" flex justify-center items-center">

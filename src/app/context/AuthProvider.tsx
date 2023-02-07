@@ -55,6 +55,8 @@ const AuthProvider = ({ children }: any) => {
     return deleteUser(auth.currentUser);
   };
   const handleSignOut = () => {
+    localStorage.removeItem('accessToken');
+
     return signOut(auth);
   };
   useEffect(() => {

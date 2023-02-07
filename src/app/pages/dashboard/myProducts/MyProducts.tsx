@@ -5,21 +5,34 @@ import moment from 'moment';
 import TimeAgo from '../../../shared/TimeAgo/TimeAgo';
 import { format } from 'date-fns';
 import { AuthContext } from '../../../context/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const MyProducts = () => {
-  const { user } = useContext(AuthContext);
+  const { user, handleSignOut, loading } = useContext(AuthContext);
+
+  const navigate = useNavigate();
   const { data: productData = [], isLoading } = useQuery({
-    queryKey: ['products', user?.email],
+    queryKey: ['product', user?.email],
     queryFn: async () => {
       const res = await fetch(
-        `http://localhost:5000/product?email=${user?.email}`
+        ` http://localhost:5000/product?email=${user?.email}`,
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        }
       );
+      console.log(' my resposove', res);
+      if (res.status === 401 || res.status === 403) {
+        return handleSignOut();
+      }
+
       const data = await res.json();
       return data;
     },
   });
-  console.log(productData);
-  if (isLoading) {
+
+  if (isLoading || loading) {
     return <Loading />;
   }
 

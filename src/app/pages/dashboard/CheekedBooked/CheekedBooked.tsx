@@ -10,17 +10,18 @@ const CheekedBooked = () => {
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['booking'],
     queryFn: async () => {
-      const res = await fetch('http://localhost:5000/booking');
+      const res = await fetch(
+        ' https://reseller-products-server.vercel.app/booking'
+      );
       const data = await res.json();
       return data;
     },
   });
 
-  const mySellProducts = products.filter(
+  const mySellProducts = products.find(
     (product: any) => product.email === user?.email
   );
-  console.log(mySellProducts);
-  console.log(products);
+  console.log('my', mySellProducts);
   if (isLoading) {
     return <Loading />;
   }
@@ -39,10 +40,25 @@ const CheekedBooked = () => {
   return (
     <div>
       <h2 className="mt-2 mb-2 text-xl"> Already booked My products</h2>
-      <div className="grid lg:grid-cols-3 grid-cols-1 sm:grid-cols-2  gap-4 px-4">
-        {mySellProducts.map((product: any) => (
-          <Product key={product._id} product={product} />
-        ))}
+      <div className="overflow-x-auto">
+        <table className="table table-zebra w-full">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Job</th>
+              <th>Favorite Color</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* {mySellProducts?.map((product: any) => () => (
+              <tr>
+                <th></th>
+                <td>{product.bookedEmail}</td>
+              </tr>
+            ))} */}
+          </tbody>
+        </table>
       </div>
     </div>
   );

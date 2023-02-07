@@ -14,6 +14,7 @@ import ProductDetails from '../../pages/productDetails/ProductDetails';
 import MyBooking from '../../pages/dashboard/myBooking/MyBooking';
 import CheekedBooked from '../../pages/dashboard/CheekedBooked/CheekedBooked';
 import MyProducts from '../../pages/dashboard/myProducts/MyProducts';
+import PrivetRoute from '../privetRoute/PrivetRoute';
 
 const router = createBrowserRouter([
   {
@@ -33,10 +34,19 @@ const router = createBrowserRouter([
       },
       {
         path: 'productDetails/:prodId',
-        element: <ProductDetails />,
+        element: (
+          <PrivetRoute>
+            <ProductDetails />
+          </PrivetRoute>
+        ),
         loader: async ({ params }) => {
           const res = await fetch(
-            `http://localhost:5000/products/${params.prodId}`
+            ` http://localhost:5000/product/${params.prodId}`,
+            {
+              headers: {
+                authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+              },
+            }
           );
           const data = await res.json();
           return data;
@@ -46,11 +56,20 @@ const router = createBrowserRouter([
   },
   {
     path: '/dashboard',
-    element: <DashboardLayout />,
+    element: (
+      <PrivetRoute>
+        <DashboardLayout />
+      </PrivetRoute>
+    ),
     children: [
       {
         path: '/dashboard',
-        element: <Dashboard />,
+        element: (
+          <PrivetRoute>
+            {' '}
+            <Dashboard />
+          </PrivetRoute>
+        ),
       },
       {
         path: 'manage-user',
@@ -66,11 +85,20 @@ const router = createBrowserRouter([
       },
       {
         path: 'profile',
-        element: <Profile />,
+        element: (
+          <PrivetRoute>
+            <Profile />
+          </PrivetRoute>
+        ),
       },
       {
         path: 'my-booking',
-        element: <MyBooking />,
+        element: (
+          <PrivetRoute>
+            {' '}
+            <MyBooking />
+          </PrivetRoute>
+        ),
       },
 
       {
@@ -79,7 +107,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'myProducts',
-        element: <MyProducts />,
+        element: (
+          <PrivetRoute>
+            <MyProducts />
+          </PrivetRoute>
+        ),
       },
     ],
   },
