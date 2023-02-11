@@ -12,7 +12,7 @@ const Header = () => {
   };
 
   const date = sub(new Date(), { minutes: 10 }).toISOString();
-  console.log(date);
+
   return (
     <div style={bgBanner} className="hero    ">
       <div className="hero-content flex-col lg:flex-row">

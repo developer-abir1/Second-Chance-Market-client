@@ -1,23 +1,51 @@
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useState } from 'react';
 import Loading from '../../../shared/Loading/Loading';
 import moment from 'moment';
 import TimeAgo from '../../../shared/TimeAgo/TimeAgo';
 import { format } from 'date-fns';
+import { toast } from 'react-hot-toast';
+import ConformModal from '../../../shared/confromModal/ConformModal';
 
 const ManageProducts = () => {
-  const { data: productData = [], isLoading } = useQuery({
+  const [conformDeleteProducts, setConformDeleteProducts] = useState<any>(null);
+
+  const {
+    data: productData = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const res = await fetch(` http://localhost:5000/products`, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      const res = await fetch(
+        `  https://reseller-products-server.vercel.app/products`,
+        {
+          headers: {
+            authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        }
+      );
       const data = await res.json();
       return data;
     },
   });
+
+  const handleDelete = (id: any) => {
+    fetch(` https://reseller-products-server.vercel.app/product/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.deletedCount > 1) {
+          toast.success('product delete successfully');
+        }
+        refetch();
+        setConformDeleteProducts(null);
+      });
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -74,13 +102,28 @@ const ManageProducts = () => {
                 </td>
 
                 <td>
-                  <button className=" btn btn-sm    btn-error">Delete</button>
+                  <label
+                    htmlFor="conform-modal"
+                    className="btn  bg-red-500  btn-xs border-none text-white "
+                    onClick={() => setConformDeleteProducts(product)}
+                  >
+                    Delete
+                  </label>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {conformDeleteProducts && (
+        <ConformModal
+          title={` Do you want to delete this ${conformDeleteProducts.title}`}
+          textColor="delete"
+          data={conformDeleteProducts}
+          action={handleDelete}
+        />
+      )}
     </div>
   );
 };

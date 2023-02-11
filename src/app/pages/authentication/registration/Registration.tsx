@@ -60,7 +60,6 @@ const Registration = () => {
 
       createUserAccount(data.email, data.password)
         .then((res: any) => {
-          console.log('create users', res);
           if (res.uid) {
           }
           updateUserAccount(data.displayName, imageURL);
@@ -68,7 +67,6 @@ const Registration = () => {
         })
 
         .catch((err: any) => {
-          console.log(err);
           setError(err.message);
         });
     } else {
@@ -77,20 +75,18 @@ const Registration = () => {
   };
 
   const saveUserAccountDB = (data: any) => {
-    fetch(' https://reseller-products-server.vercel.app/users', {
+    fetch('   https://reseller-products-server.vercel.app/users', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     }).then((res) =>
       res.json().then((data) => {
-        console.log('database save data', data);
         if (data.insertedId) {
           toast.success('Registration Successfull');
           naviget('/');
         }
       })
     );
-    console.log(data);
   };
 
   return (

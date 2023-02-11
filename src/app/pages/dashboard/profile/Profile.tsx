@@ -31,7 +31,12 @@ const Profile = () => {
     queryKey: ['users', user?.email],
     queryFn: async () => {
       const res = await fetch(
-        ` https://reseller-products-server.vercel.app/users?email=${user?.email}`
+        `   https://reseller-products-server.vercel.app/users/profile?email=${user?.email}`,
+        {
+          headers: {
+            authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+          },
+        }
       );
       const data = await res.json();
       return data;
@@ -41,7 +46,7 @@ const Profile = () => {
   const reloadMe = () => {
     location.reload();
   };
-  console.log('myAccount', myAccount);
+
   const {
     register,
     handleSubmit,
@@ -61,14 +66,14 @@ const Profile = () => {
       address: data.address,
       photoURL: !imageURL ? myAccount.photoURL : imageURL,
     };
-    console.log('disp', updateInfo);
 
     fetch(
-      ` https://reseller-products-server.vercel.app/users/${myAccount._id}`,
+      `   https://reseller-products-server.vercel.app/users/${myAccount._id}`,
       {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          authorization: 'Bearer ' + localStorage.getItem('accessToken'),
         },
         body: JSON.stringify(updateInfo),
       }
@@ -77,22 +82,18 @@ const Profile = () => {
       .then((update: any) => {
         if (update.modifiedCount > 0) {
           updateUserAccount(data.displayName, imageURL)
-            .then((res: any) => {})
-            .catch((err: any) => {
-              console.log('Massage', err.message);
-            });
-          updateUserEmail(data.email).then((res: any) => {
-            console.log('Massage', res.message);
-          });
+            .then((res: any) => {
+              toast.success('Profile Updated Successfully');
+            })
+            .catch((err: any) => {});
         }
       });
-    toast.success('Profile Updated Successfully');
 
     setUpdatingProfile(null);
     refetch();
   };
 
-  if (isLoading) {
+  if (isLoading || loading) {
     return <Loading />;
   }
 

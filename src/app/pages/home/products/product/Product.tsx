@@ -4,17 +4,15 @@ import TimeAgo from '../../../../shared/TimeAgo/TimeAgo';
 const Product = ({ product }: any) => {
   const pathname = useLocation();
 
+  console.log(product);
   return (
-    <div className="card card-compact relative  bg-white   shadow-xl cursor-pointer">
+    <div className="  h-[28rem]  card card-compact relative  bg-white   shadow-xl cursor-pointer">
       <figure>
-        <div className=" relative      p-2 mt-2 rounded">
+        <div className=" relative       p-2 mt-2 rounded">
           <img
-            src={
-              product?.image ||
-              'https://www.cycleassociation.uk/uploaded_images/e-bike-section/8e473e4eb4b1502222b1192ca660ec3a.jpg'
-            }
-            alt="Shoes"
-            className="  object-contain   h-full w-full  rounded-md "
+            src={product?.image}
+            alt={product.title}
+            className="    object-cover    w-full     rounded-md "
           />
           <h2 className=" absolute z-1 bottom-10 text-gray-400  right-0 font-bold text-xs">
             SecondChanceMarket.com
@@ -29,10 +27,10 @@ const Product = ({ product }: any) => {
           </h2>
 
           <h2 className=" text-lg font-thin">
-            {product?.modle}- {product?.miles} KM
+            {product?.model}- {product?.mileage} KM
           </h2>
         </div>
-        <h2 className="card-title    text-2xl   font-serif ">
+        <h2 className="card-title  font-semibold   text-2xl   ">
           {product.title}
         </h2>
         <div className="flex justify-between w-full">

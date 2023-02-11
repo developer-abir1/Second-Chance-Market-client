@@ -12,9 +12,10 @@ import ManageProducts from '../../pages/dashboard/manageProducts/ManageProducts'
 import Profile from '../../pages/dashboard/profile/Profile';
 import ProductDetails from '../../pages/productDetails/ProductDetails';
 import MyBooking from '../../pages/dashboard/myBooking/MyBooking';
-import CheekedBooked from '../../pages/dashboard/CheekedBooked/CheekedBooked';
 import MyProducts from '../../pages/dashboard/myProducts/MyProducts';
 import PrivetRoute from '../privetRoute/PrivetRoute';
+import AdminRoute from '../AdminRoute/AdminRoute';
+import AdminDashboard from '../../pages/dashboard/adminDashboard/AdminDashboard';
 
 const router = createBrowserRouter([
   {
@@ -41,12 +42,8 @@ const router = createBrowserRouter([
         ),
         loader: async ({ params }) => {
           const res = await fetch(
-            ` http://localhost:5000/product/${params.prodId}`,
-            {
-              headers: {
-                authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-              },
-            }
+            `  https://reseller-products-server.vercel.app/product/${params.prodId}`,
+            {}
           );
           const data = await res.json();
           return data;
@@ -73,15 +70,38 @@ const router = createBrowserRouter([
       },
       {
         path: 'manage-user',
-        element: <ManageUser />,
+        element: (
+          <AdminRoute>
+            <ManageUser />
+          </AdminRoute>
+        ),
       },
       {
         path: 'add-products',
-        element: <AddProducts />,
+        element: (
+          <PrivetRoute>
+            {' '}
+            <AddProducts />
+          </PrivetRoute>
+        ),
       },
       {
         path: 'manage-products',
-        element: <ManageProducts />,
+        element: (
+          <AdminRoute>
+            {' '}
+            <ManageProducts />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: 'admin-dashboard',
+        element: (
+          <AdminRoute>
+            {' '}
+            <AdminDashboard />
+          </AdminRoute>
+        ),
       },
       {
         path: 'profile',
@@ -101,10 +121,6 @@ const router = createBrowserRouter([
         ),
       },
 
-      {
-        path: 'cheeked-booked',
-        element: <CheekedBooked />,
-      },
       {
         path: 'myProducts',
         element: (

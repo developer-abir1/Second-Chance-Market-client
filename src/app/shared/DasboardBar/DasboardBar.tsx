@@ -10,13 +10,13 @@ const DasboardBar = () => {
   };
 
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-white  ">
       <div className="flex-1 ">
         <label
           htmlFor="dashboard-drawer"
-          className="btn  ml-4 mr-2     drawer-button"
+          className="btn  ml-4 mr-2     drawer-button btn-ghost text-green-600"
         >
-          <HiOutlineBars3BottomLeft className=" text-secondary" size={40} />
+          <HiOutlineBars3BottomLeft className=" " size={40} />
         </label>
       </div>
       <div className="flex-none">
@@ -42,9 +42,7 @@ const DasboardBar = () => {
                         <a className="justify-between"> {user?.displayName}</a>
                       </li>
                     </Link>
-                    <li>
-                      <a>Settings</a>
-                    </li>
+
                     <li onClick={handleLogout}>
                       <a>Logout</a>
                     </li>

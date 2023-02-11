@@ -1,28 +1,35 @@
 import { useQuery } from '@tanstack/react-query';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import Loading from '../../../shared/Loading/Loading';
 import moment from 'moment';
 import TimeAgo from '../../../shared/TimeAgo/TimeAgo';
 import { format } from 'date-fns';
 import { AuthContext } from '../../../context/AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import ConformModal from '../../../shared/confromModal/ConformModal';
 
 const MyProducts = () => {
   const { user, handleSignOut, loading } = useContext(AuthContext);
+  const [conformDeletUser, setConformDeletUser] = useState<any>(null);
 
   const navigate = useNavigate();
-  const { data: productData = [], isLoading } = useQuery({
+  const {
+    data: productData = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ['product', user?.email],
     queryFn: async () => {
       const res = await fetch(
-        ` http://localhost:5000/product?email=${user?.email}`,
+        `  https://reseller-products-server.vercel.app/product?email=${user?.email}`,
         {
           headers: {
             authorization: `Bearer ${localStorage.getItem('accessToken')}`,
           },
         }
       );
-      console.log(' my resposove', res);
+
       if (res.status === 401 || res.status === 403) {
         return handleSignOut();
       }
@@ -31,6 +38,23 @@ const MyProducts = () => {
       return data;
     },
   });
+
+  const handleDelete = (id: any) => {
+    fetch(` https://reseller-products-server.vercel.app/product/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.deletedCount > 1) {
+          toast.success('product delete successfully');
+        }
+        refetch();
+        setConformDeletUser(null);
+      });
+  };
 
   if (isLoading || loading) {
     return <Loading />;
@@ -87,13 +111,29 @@ const MyProducts = () => {
                 </td>
 
                 <td>
-                  <button className=" btn btn-sm    btn-error">Delete</button>
+                  <label
+                    htmlFor="conform-modal"
+                    className="btn  bg-red-500  btn-xs border-none text-white "
+                    onClick={() => setConformDeletUser(product)}
+                  >
+                    Delete
+                  </label>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {conformDeletUser && (
+        <ConformModal
+          data={conformDeletUser}
+          message="are you  sure ? delete this products"
+          title={` do you want to delete ${conformDeletUser?.title}`}
+          action={handleDelete}
+          textColor="delete"
+        />
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
 import Loading from '../../shared/Loading/Loading';
 import moment from 'moment';
@@ -6,52 +6,64 @@ import TimeAgo from '../../shared/TimeAgo/TimeAgo';
 import { AuthContext } from '../../context/AuthProvider';
 import { toast } from 'react-hot-toast';
 import { useQuery } from '@tanstack/react-query';
+import ConformModal from '../../shared/confromModal/ConformModal';
 const ProductDetails = () => {
   const product: any = useLoaderData();
   const { user } = useContext(AuthContext);
-  console.log('safdsaf', product);
-
+  const [conformBooking, setConformBooking] = useState<any>(null);
+  const [phoneNumber, setPhoneNumber] = useState<any>(null);
   const {
     data: bookings = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ['booking', product._id],
+    queryKey: ['booking'],
     queryFn: async () => {
       const res = await fetch(
-        ` https://reseller-products-server.vercel.app/booking`
+        `   https://reseller-products-server.vercel.app/booking`,
+        {
+          headers: {
+            authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+          },
+        }
       );
       const data = await res.json();
       return data;
     },
   });
-
-  const handleBooking = () => {
+  const alradyBooked = bookings?.find(
+    (booking: any) => booking.product._id === product._id
+  );
+  const handleBooking = (data: any) => {
     const bookingData = {
       bookedEmail: user?.email,
       bookedName: user?.displayName,
-      ...product,
-      date: moment().format('MMMM Do YYYY, h:mm:ss a'),
+      bookedPhone: phoneNumber,
+      product: { ...product },
+      time: moment().format('h:mm:ss a'),
+      date: moment().format('MMMM Do YYYY'),
     };
-    fetch(' https://reseller-products-server.vercel.app/booking', {
+    fetch('   https://reseller-products-server.vercel.app/booking', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify(bookingData),
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        toast.success('booking is successfull');
-        refetch();
+      .then((results) => {
+        console.log(results);
+        if (results.insertedId) {
+          refetch();
+          setConformBooking(null);
+          toast.success('booking is successfull');
+        }
       });
   };
-  if (!product || isLoading) {
+  if (!product) {
     return <Loading />;
   }
-  const alradyBooked = bookings.find(
-    (booking: any) => booking._id === product?._id
-  );
-  console.log('alradyBooked', alradyBooked);
+
   return (
     <div>
       <div className="card w-full bg-base-100 shadow-xl">
@@ -113,16 +125,30 @@ const ProductDetails = () => {
               New Price $ {product.newPrice}
             </h2>
 
-            <button
-              className=" btn btn-primary w-[80%]"
-              onClick={handleBooking}
-              disabled={alradyBooked}
+            <label
+              onClick={() => setConformBooking(product)}
+              htmlFor="conform-modal"
+              className={` bg-green-600  border-0 text-white  hover:bg-green-500   btn w-[80%]  ${
+                alradyBooked && ' opacity-50 cursor-not-allowed disabled  '
+              } `}
             >
+              {' '}
               Book Now
-            </button>
+            </label>
           </div>
         </div>
       </div>
+      {!alradyBooked && conformBooking && (
+        <ConformModal
+          title={` Are you sure you want to book this${product.title}`}
+          textColor="booked"
+          data={conformBooking}
+          action={handleBooking}
+          addNumber={true}
+          message=" Enter your phone number"
+          number={setPhoneNumber}
+        />
+      )}
     </div>
   );
 };

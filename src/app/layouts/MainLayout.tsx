@@ -5,12 +5,10 @@ import Navigation from '../shared/Navigation/Navigation';
 
 const MainLayout = () => {
   return (
-    <div className="flex flex-col justify-between  min-h-screen   ">
+    <div className="flex flex-col justify-between  min-h-screen     ">
       <Navigation />
 
       <Outlet />
-
-      <Footer />
     </div>
   );
 };

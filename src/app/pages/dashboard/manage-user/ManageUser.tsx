@@ -7,25 +7,35 @@ import app from '../../../../firebase/firebaseConfig/firebaseConfig';
 import ConformModal from '../../../shared/confromModal/ConformModal';
 import { toast } from 'react-hot-toast';
 const ManageUser = () => {
+  const { user, loading } = useContext(AuthContext);
   const [conformDeletUser, setConformDeletUser] = useState<any>(null);
   const {
     data: users = [],
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ['admin'],
+    queryKey: ['users'],
     queryFn: async () => {
       const res = await fetch(
-        ` https://reseller-products-server.vercel.app/users/admin`
+        ` https://reseller-products-server.vercel.app/users`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+          },
+        }
       );
       const data = await res.json();
       return data;
     },
   });
 
+  console.log('all of uer', users);
   const handleMakeAdmin = (id: any) => {
-    fetch(` https://reseller-products-server.vercel.app/users/admin/${id}`, {
+    fetch(`   https://reseller-products-server.vercel.app/users/admin/${id}`, {
       method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('accessToken'),
+      },
     })
       .then((res) => res.json())
       .then((data) => {
@@ -36,7 +46,7 @@ const ManageUser = () => {
       });
   };
   const removeAdmin = (id: any) => {
-    fetch(` https://reseller-products-server.vercel.app/users/admin/${id}`, {
+    fetch(`   https://reseller-products-server.vercel.app/users/admin/${id}`, {
       method: 'PATCH',
     })
       .then((res) => res.json())
@@ -49,20 +59,20 @@ const ManageUser = () => {
   };
 
   const removeUser = (id: any) => {
-    fetch(` https://reseller-products-server.vercel.app/users/admin/${id}`, {
+    fetch(`   https://reseller-products-server.vercel.app/users/admin/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.deletedCount > 0) {
           toast.success('user delete successfully');
-          console.log(data);
+
           setConformDeletUser(null);
           refetch();
         }
       });
   };
-  console.log(users);
+
   if (isLoading) return <Loading />;
 
   if (users.length === 0) {
@@ -138,6 +148,7 @@ const ManageUser = () => {
             message="Are you sure you want to delete"
             data={conformDeletUser}
             action={removeUser}
+            textColor={'delete'}
           />
         )}
       </div>

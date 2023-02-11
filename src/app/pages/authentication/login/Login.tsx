@@ -14,6 +14,7 @@ const Login = () => {
   };
   const [loggedInUser, setLoggedInUser] = useState<any>(null);
   const [token] = useToken(loggedInUser);
+  console.log(token);
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const location = useLocation();
@@ -30,7 +31,7 @@ const Login = () => {
     singInUserAccount(data.email, data.password)
       .then((result: any) => {
         const user = result.user;
-        console.log('user', user.email);
+
         const currentUser = {
           email: user.email,
         };
@@ -42,14 +43,14 @@ const Login = () => {
   };
 
   // const accessTokenToken = (currentUser: any) => {
-  //   fetch(' http://localhost:5000/jwt', {
+  //   fetch('  https://reseller-products-server.vercel.app/jwt', {
   //     method: 'POST',
   //     headers: { 'Content-Type': 'application/json' },
   //     body: JSON.stringify(currentUser),
   //   })
   //     .then((response) => response.json())
   //     .then((data) => {
-  //       console.log('data', data);
+  //
   //       localStorage.setItem('accessToken', data.token);
   //       toast.success('Login Success');
   //       navigate(from);

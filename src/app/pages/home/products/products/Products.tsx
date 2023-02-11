@@ -9,7 +9,7 @@ const Products = () => {
     queryKey: ['products'],
     queryFn: async () => {
       const res = await fetch(
-        ' https://reseller-products-server.vercel.app/products'
+        '   https://reseller-products-server.vercel.app/products'
       );
       const data = await res.json();
       return data;
@@ -17,8 +17,9 @@ const Products = () => {
   });
   const newProducts = products
     ?.slice()
-    .sort((a: any, b: any) => b.date.localeCompare(a.date));
+    ?.sort((a: any, b: any) => b.date.localeCompare(a.date));
 
+  console.log(newProducts);
   if (isLoading) {
     return <Loading />;
   }
@@ -30,7 +31,7 @@ const Products = () => {
 
     <div>
       <div className=" container m-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 py-8 justify-items-center gap-4">
+        <div className="px-4   grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 py-8 justify-items-center gap-4">
           {newProducts?.map((product: any) => (
             <Link to={'/productDetails/' + product._id}>
               {' '}
